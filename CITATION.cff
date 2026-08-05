@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "tirf_microscope_simulation"
+abstract: "TIRF microscope simulator"
+authors:
+  - family-names: Dickinson
+    given-names: "George D."
+    orcid: https://orcid.org/0000-0001-7711-0388
+    affiliation: University of California, Irvine
+repository-code: "https://github.com/gddickinson/tirf_microscope_simulation"
+url: "https://github.com/gddickinson/tirf_microscope_simulation"
+license: MIT
+date-released: 2024-09-18
