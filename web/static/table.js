@@ -33,20 +33,20 @@ route('table', async (args, query) => {
   controls.insertAdjacentHTML('beforeend', `<p class="small mute">The beam leaves along the laser's orientation; Angle X turns it
     within the table plane and Angle Y tilts it out of the plane. The ${T.sensor_px[0]}-px sensor is centred on the camera
     ${T.camera.position[0] - T.laser.position[0]} units away, so the whole slider range lands on it.
-    Power is stored but does not change the image.</p>`);
+    Power (% of full scale) scales the spot: peak 255 at 100%.</p>`);
 
   const cTop = document.getElementById('top').getContext('2d'), cSide = document.getElementById('sideT').getContext('2d'),
     cCam = document.getElementById('cam').getContext('2d'), cZoom = document.getElementById('zoom').getContext('2d');
 
   function draw() {
-    const r = st.running ? simulateTable(T, st.ax, st.ay, { laserOn: st.laserOn, cameraOn: st.cameraOn }) : null;
+    const r = st.running ? simulateTable(T, st.ax, st.ay, { laserOn: st.laserOn, cameraOn: st.cameraOn, power: st.power }) : null;
     plan(cTop, T, r, 0, 1, 'x', 'y'); plan(cSide, T, r, 0, 2, 'x', 'z');
     camera(cCam, cZoom, r && r.spot);
     out(!r ? [['simulation', 'stopped']] : [
       ['direction', r.direction ? r.direction.map(v => v.toFixed(3)).join(', ') : '—'],
       ['ray length', `${fmt(r.length, 0)} units`],
       ['camera hit (px)', r.hit ? `${fmt(r.hit[0], 1)}, ${fmt(r.hit[1], 1)}` : esc(r.why)],
-      ['spot peak', r.spot ? '255' : '0'], ['power', String(st.power)],
+      ['spot peak', r.spot ? fmt(Math.max(...r.spot.values), 1) : '0'], ['power', `${st.power}%`],
     ]);
   }
   draw();

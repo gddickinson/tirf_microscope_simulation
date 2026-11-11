@@ -20,5 +20,5 @@ class Mirror(OpticalComponent):
         # Calculate the reflection
         reflected_direction = reflect(ray.direction, normal)
 
-        # Create and return the reflected ray (Ray has no intensity attribute; keep the incoming ray length)
-        return [Ray(self.position, reflected_direction, ray.wavelength, ray.length)]
+        # Create and return the reflected ray (same wavelength, length and intensity)
+        return [Ray(self.position, reflected_direction, ray.wavelength, ray.length, ray.intensity)]

@@ -32,12 +32,12 @@ route('check', async () => {
   rows.push(['Fluorophore positions after 3 Brownian steps', 60, maxRel(['x', 'y', 'z'].flatMap(a => im.moved[a].map((v, i) => [s[a][i], v])))]);
   const tb = [];
   for (const c of F.table) {
-    const js = simulateTable(F.table_setup, c.ax_deg, c.ay_deg);
+    const js = simulateTable(F.table_setup, c.ax_deg, c.ay_deg, { power: c.power });
     c.direction.forEach((v, i) => tb.push([js.direction[i], v]));
     tb.push([js.hit ? js.hit[0] : null, c.hit ? c.hit[0] : null], [js.hit ? js.hit[1] : null, c.hit ? c.hit[1] : null]);
     tb.push([js.spot ? js.spot.values.reduce((a, b) => a + b, 0) : 0, c.image_sum]);
   }
-  rows.push(['Light table: beam, camera hit, spot (8 angle pairs)', F.table.length, maxRel(tb)]);
+  rows.push([`Light table: beam, camera hit, spot (${F.table.length} angle/power cases)`, F.table.length, maxRel(tb)]);
   const ok = rows.every(r => r[2] <= 1e-9);
   app().innerHTML = `<p class="kicker">JavaScript vs Python</p><h1 class="glow">Cross-check</h1>
   <p class="lead">The simulation on this site runs in JavaScript. These are the Python reference cases from

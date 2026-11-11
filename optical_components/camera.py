@@ -21,7 +21,7 @@ class Camera(OpticalComponent):
         if intersection is not None:
             x, y = intersection
             logger.debug(f"Ray intersected camera at pixel coordinates: ({x:.2f}, {y:.2f})")
-            self.add_diffraction_spot(x, y)
+            self.add_diffraction_spot(x, y, getattr(ray, 'intensity', 1.0))
         else:
             logger.debug("Ray did not intersect with camera sensor")
         return []
@@ -65,7 +65,7 @@ class Camera(OpticalComponent):
     def get_local_y(self):
         return np.cross(self.get_local_x(), self.orientation)
 
-    def add_diffraction_spot(self, x, y):
+    def add_diffraction_spot(self, x, y, intensity=1.0):
         # Create a 2D Gaussian to represent the diffraction-limited spot
         sigma = 5  # Increased from 1
         x_range = np.arange(max(0, int(x)-20), min(self.sensor_size[0], int(x)+21))
@@ -73,8 +73,8 @@ class Camera(OpticalComponent):
         xx, yy = np.meshgrid(x_range, y_range)
         gaussian = multivariate_normal.pdf(np.dstack((xx, yy)), mean=[x, y], cov=[[sigma, 0], [0, sigma]])
 
-        # Normalize and add to the image
-        gaussian_normalized = gaussian / gaussian.max() * 255
+        # Normalize, scale by the ray's relative intensity (peak 255 at full laser power) and add to the image
+        gaussian_normalized = gaussian / gaussian.max() * 255 * min(max(intensity, 0.0), 1.0)
         self.image[y_range[0]:y_range[-1]+1, x_range[0]:x_range[-1]+1] = np.maximum(
             self.image[y_range[0]:y_range[-1]+1, x_range[0]:x_range[-1]+1],
             gaussian_normalized

@@ -14,7 +14,7 @@ class Lens(OpticalComponent):
         focal_point = self.position + self.orientation * self.focal_length
         to_focal = focal_point - ray.origin
         new_direction = normalize(ray.direction + to_focal * 0.1)
-        return [Ray(self.position, new_direction, ray.wavelength)]
+        return [Ray(self.position, new_direction, ray.wavelength, intensity=ray.intensity)]
 
     def get_schematic_representation(self):
         return ('circle', self.position[:2], self.orientation[:2], (self.diameter, self.diameter))

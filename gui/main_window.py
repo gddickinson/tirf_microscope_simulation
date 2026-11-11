@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
         self.laser_power_slider.setRange(*POWER_RANGE)
         self.laser_power_slider.setValue(POWER_SLIDER_DEFAULT)
         self.laser_power_slider.valueChanged.connect(self.update_laser_power)
+        self.update_laser_power(self.laser_power_slider.value())  # laser starts at the slider's power
         layout.addWidget(QLabel("Laser Power"))
         layout.addWidget(self.laser_power_slider)
 

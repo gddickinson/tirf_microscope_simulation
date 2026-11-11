@@ -36,7 +36,7 @@ class LightTable:
 
     def extend_ray(self, ray, target_position):
         distance = np.linalg.norm(target_position - ray.origin)
-        extended_ray = Ray(ray.origin, ray.direction, ray.wavelength, distance * 3)  # Increased from 2 to 3
+        extended_ray = Ray(ray.origin, ray.direction, ray.wavelength, distance * 3, ray.intensity)  # Increased from 2 to 3
         logger.debug(f"Extended ray: origin={extended_ray.origin}, direction={extended_ray.direction}, length={extended_ray.length}")
         return extended_ray
 

@@ -22,8 +22,8 @@ export async function staticApi(path) {
   }
   if (clean === 'table') {
     const { table } = await file('presets');
-    const r = simulateTable(table, q.ax_deg || 0, q.ay_deg || 0);
-    return { ax_deg: q.ax_deg || 0, ay_deg: q.ay_deg || 0, origin: r.origin, direction: r.direction, length: r.length, hit: r.hit };
+    const power = q.power ?? 100, r = simulateTable(table, q.ax_deg || 0, q.ay_deg || 0, { power });
+    return { ax_deg: q.ax_deg || 0, ay_deg: q.ay_deg || 0, power, origin: r.origin, direction: r.direction, length: r.length, hit: r.hit };
   }
   return file(clean);
 }

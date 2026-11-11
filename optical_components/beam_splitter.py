@@ -17,6 +17,6 @@ class BeamSplitter(OpticalComponent):
         transmitted_direction = ray.direction
 
         return [
-            Ray(self.position, reflected_direction, ray.wavelength),
-            Ray(self.position, transmitted_direction, ray.wavelength)
+            Ray(self.position, reflected_direction, ray.wavelength, intensity=ray.intensity * self.split_ratio),
+            Ray(self.position, transmitted_direction, ray.wavelength, intensity=ray.intensity * (1 - self.split_ratio))
         ]

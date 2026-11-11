@@ -48,3 +48,39 @@ def test_camera_hit_across_the_slider_range():
             # camera 500 units from the laser: offsets 500 tan(ax) and 500 tan(ay) / cos(ax)
             np.testing.assert_allclose(r["hit"], [500 + 500 * math.tan(math.radians(ax)),
                                                   500 + 500 * math.tan(math.radians(ay)) / math.cos(math.radians(ax))], atol=1e-6)
+
+
+# 2. Laser power scales the light delivered to the camera (power in % of full scale: peak 255 at 100).
+@pytest.mark.parametrize("power", [0, 25, 50, 100])
+def test_power_scales_the_camera_spot(power):
+    r = light_table(10, -5, power)
+    full = light_table(10, -5, 100)
+    assert math.isclose(r["image_max"], 255 * power / 100, abs_tol=1e-9)
+    assert math.isclose(r["image_sum"], full["image_sum"] * power / 100, rel_tol=1e-12, abs_tol=1e-9)
+
+
+def test_ray_intensity_carried_through_components():
+    from tirf_sim.optical_components import Ray, Mirror, Lens, Filter, Objective, BeamSplitter
+    ray = Ray((0, 0, 0), (1, 0, 0), 500, intensity=0.4)
+    assert Laser((0, 0, 0), (1, 0, 0), 488, 30).emit_light().intensity == pytest.approx(0.3)
+    for comp in (Mirror((1, 0, 0), (0, 1, 0), (1, 1)), Lens((1, 0, 0), (1, 0, 0), 50, 10),
+                 Filter((1, 0, 0), (1, 0, 0), (400, 600)), Objective((1, 0, 0), (1, 0, 0), 100, 1.49)):
+        assert comp.interact_with_light(ray)[0].intensity == pytest.approx(0.4), type(comp).__name__
+    refl, trans = BeamSplitter((1, 0, 0), (1, 0, 1), 0.25).interact_with_light(ray)
+    assert refl.intensity == pytest.approx(0.1) and trans.intensity == pytest.approx(0.3)
+
+
+def test_gui_laser_starts_at_the_power_slider_value():
+    pytest.importorskip("PyQt5")
+    pytest.importorskip("pyqtgraph")
+    import os
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PyQt5.QtWidgets import QApplication
+    app = QApplication.instance() or QApplication([])  # noqa: F841
+    from tirf_sim.gui.main_window import MainWindow
+    w = MainWindow()
+    w.timer.stop()
+    laser = next(c for c in w.microscope.components if isinstance(c, Laser))
+    assert laser.power == w.laser_power_slider.value()
+    w.laser_power_slider.setValue(80)
+    assert laser.power == 80

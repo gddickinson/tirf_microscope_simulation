@@ -60,9 +60,10 @@ def optics(wavelength_nm: float = Query(DEFAULTS["wavelength_nm"], gt=0), angle_
 
 
 @app.get("/api/table")
-def table(ax_deg: float = Query(0.0, ge=-90, le=90), ay_deg: float = Query(0.0, ge=-90, le=90)):
-    """One frame of the desktop light table at the given laser angles, computed by the real Laser/Camera classes."""
-    return light_table(ax_deg, ay_deg)
+def table(ax_deg: float = Query(0.0, ge=-90, le=90), ay_deg: float = Query(0.0, ge=-90, le=90),
+          power: float = Query(100.0, ge=0, le=100)):
+    """One frame of the desktop light table (angles in degrees, power in %), computed by the real Laser/Camera classes."""
+    return light_table(ax_deg, ay_deg, power)
 
 
 @app.get("/api/check")

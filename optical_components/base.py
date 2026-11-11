@@ -21,8 +21,9 @@ class OpticalComponent:
         self.is_on = False
 
 class Ray:
-    def __init__(self, origin, direction, wavelength, length=1000):
+    def __init__(self, origin, direction, wavelength, length=1000, intensity=1.0):
         self.origin = np.array(origin)
         self.direction = normalize(np.array(direction))
         self.wavelength = wavelength
         self.length = length
+        self.intensity = intensity  # relative to the laser at full power (Laser.power = 100)

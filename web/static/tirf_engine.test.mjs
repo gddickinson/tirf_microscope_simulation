@@ -51,7 +51,7 @@ n += 6;
 
 // 5. the desktop light table (laser angles in degrees -> camera hit pixel, spot image)
 for (const c of FIX.table) {
-  const js = simulateTable(FIX.table_setup, c.ax_deg, c.ay_deg);
+  const js = simulateTable(FIX.table_setup, c.ax_deg, c.ay_deg, { power: c.power });
   c.direction.forEach((v, i) => close(js.direction[i], v, `dir ${c.ax_deg},${c.ay_deg}`));
   close(js.length, c.length, 'ray length');
   if (c.hit === null) { assert.equal(js.hit, null, `no hit at ${c.ax_deg},${c.ay_deg}`); assert.equal(c.image_sum, 0); n++; continue; }

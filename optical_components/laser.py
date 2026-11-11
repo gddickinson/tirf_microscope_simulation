@@ -15,7 +15,8 @@ class Laser(OpticalComponent):
     def emit_light(self):
         direction = self.calculate_direction()
         logger.debug(f"Laser emitting light from {self.position} in direction {direction}")
-        return Ray(self.position, direction, self.wavelength)
+        # power is in % of full scale; the ray carries it as a relative intensity
+        return Ray(self.position, direction, self.wavelength, intensity=self.power / 100.0)
 
 
     def calculate_direction(self):

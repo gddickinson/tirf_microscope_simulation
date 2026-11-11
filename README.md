@@ -40,7 +40,7 @@ python main.py
 
 3. Press "Start Simulation", then use the sliders in the control panel to adjust the laser angles and power.
    The beam leaves along the laser's orientation; Angle X turns it within the table plane and Angle Y tilts it
-   out of the plane, moving the spot across the camera. The power value is stored but does not yet change the image.
+   out of the plane, moving the spot across the camera. Laser power (% of full scale) scales the spot brightness.
 
 4. Toggle components on/off using the checkboxes in the component list.
 

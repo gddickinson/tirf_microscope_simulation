@@ -18,7 +18,8 @@ export function laserDirection(orientation, axDeg, ayDeg) {
 }
 
 // One frame: LightTable.simulate_light_path + Camera.ray_intersection + Camera.add_diffraction_spot.
-export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = true } = {}) {
+// power in % of full scale (default: the setup's laser power); the spot peak is 255 x power / 100.
+export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = true, power = setup.laser.power } = {}) {
   const lp = setup.laser.position, cp = setup.camera.position, co = normalize(setup.camera.orientation);
   const [W, H] = setup.sensor_px;
   const out = { origin: lp, direction: null, length: 0, hit: null, spot: null, why: '' };
@@ -36,12 +37,12 @@ export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = 
   const x = dot(sub(p, cp), lx) + W / 2, y = dot(sub(p, cp), ly) + H / 2;   // sensor centred on the camera
   if (!(x >= 0 && x < W && y >= 0 && y < H)) { out.why = 'ray misses the sensor'; out.miss = [x, y]; return out; }
   out.hit = [x, y];
-  out.spot = diffractionSpot(x, y, W, H);
+  out.spot = diffractionSpot(x, y, W, H, Math.min(Math.max(power / 100, 0), 1));
   return out;
 }
 
-// Camera.add_diffraction_spot: a Gaussian with covariance diag(5, 5) px^2 on a 41 x 41 window, scaled to max 255.
-export function diffractionSpot(x, y, W, H, variance = 5) {
+// Camera.add_diffraction_spot: a Gaussian with covariance diag(5, 5) px^2 on a 41 x 41 window, peak 255 x intensity.
+export function diffractionSpot(x, y, W, H, intensity = 1, variance = 5) {
   const x0 = Math.max(0, Math.trunc(x) - 20), x1 = Math.min(W, Math.trunc(x) + 21);
   const y0 = Math.max(0, Math.trunc(y) - 20), y1 = Math.min(H, Math.trunc(y) + 21);
   const w = x1 - x0, h = y1 - y0, values = new Float64Array(w * h);
@@ -50,6 +51,6 @@ export function diffractionSpot(x, y, W, H, variance = 5) {
     const dx = x0 + i - x, dy = y0 + j - y, g = Math.exp(-0.5 * (dx * dx + dy * dy) / variance);
     values[j * w + i] = g; if (g > max) max = g;
   }
-  for (let k = 0; k < values.length; k++) values[k] = values[k] / max * 255;
+  for (let k = 0; k < values.length; k++) values[k] = values[k] / max * 255 * intensity;
   return { x0, y0, w, h, values };
 }

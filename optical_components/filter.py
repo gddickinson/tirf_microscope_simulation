@@ -9,6 +9,6 @@ class Filter(OpticalComponent):
 
     def interact_with_light(self, ray: Ray) -> List[Ray]:
         if self.pass_band[0] <= ray.wavelength <= self.pass_band[1]:
-            return [Ray(self.position, ray.direction, ray.wavelength)]
+            return [Ray(self.position, ray.direction, ray.wavelength, intensity=ray.intensity)]
         else:
             return []

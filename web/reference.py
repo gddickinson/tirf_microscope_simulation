@@ -22,18 +22,20 @@ logging.getLogger("tirf_sim").setLevel(logging.WARNING)  # the camera logs every
 PATCH = 3  # half-width of the pixel patch around the spot reported for the light table
 
 
-def light_table(ax_deg, ay_deg):
-    """One frame of the desktop light table (laser + camera) with the laser angles in degrees."""
+def light_table(ax_deg, ay_deg, power=None):
+    """One frame of the desktop light table (laser + camera): laser angles in degrees, power in % (default: LASER)."""
     laser, camera = build_default_components()
     table = LightTable()
     for c in (laser, camera):
         table.add_component(c)
     laser.set_angles(math.radians(ax_deg), math.radians(ay_deg))
+    if power is not None:
+        laser.power = power
     table.simulate_light_path()
     ray = table.rays[0]
     hit = camera.ray_intersection(ray)
     img = camera.get_image()
-    out = {"ax_deg": ax_deg, "ay_deg": ay_deg, "origin": ray.origin.tolist(), "direction": ray.direction.tolist(),
+    out = {"ax_deg": ax_deg, "ay_deg": ay_deg, "power": float(laser.power), "origin": ray.origin.tolist(), "direction": ray.direction.tolist(),
            "length": float(ray.length), "hit": None if hit is None else [float(hit[0]), float(hit[1])],
            "image_sum": float(img.sum()), "image_max": float(img.max()), "patch": None}
     if hit is not None:
@@ -53,7 +55,8 @@ def table_setup():
 SMALL = dict(DEFAULTS, image_px=32, n_surface=15, n_bulk=120, depth_um=2.0, seed=3)
 OPTICS_CASES = [(wl, th, n1, n2) for wl in (405.0, 488.0, 640.0) for th in (45.0, 61.0, 62.0, 66.0, 72.5)
                 for n1, n2 in ((1.518, 1.333), (1.518, 1.38), (1.77, 1.333))]
-TABLE_CASES = [(0, 0), (20, 0), (-27, 3), (30, 0), (30, 12), (29, -4), (-30, -30), (60, 0), (0, 80), (120, 0)]
+TABLE_CASES = [(0, 0, 100), (20, 0, 50), (-27, 3, 100), (30, 0, 0), (30, 12, 73), (29, -4, 100), (-30, -30, 10),
+               (60, 0, 100), (0, 80, 100), (120, 0, 100)]
 
 
 def fixture():
@@ -78,7 +81,7 @@ def fixture():
     imaging = {"params": p, "pixel_nm": ti.sample_pixel_nm(p), "psf_sigma_nm": ti.psf_sigma_nm(p),
                "tirf": tirf, "epi": epi, "noisy_tirf": noisy, "moved": moved,
                "split_tirf": ti.signal_split(s, p, "tirf"), "split_epi": ti.signal_split(s, p, "epi")}
-    table = [light_table(ax, ay) for ax, ay in TABLE_CASES]
+    table = [light_table(ax, ay, pw) for ax, ay, pw in TABLE_CASES]
     return {"defaults": DEFAULTS, "rand": rand_seq, "normals": normals, "poisson": pois, "erf": erfs,
             "optics": optics, "imaging": imaging, "table": table, "table_setup": table_setup()}
 

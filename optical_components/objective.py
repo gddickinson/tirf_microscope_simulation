@@ -15,7 +15,7 @@ class Objective(OpticalComponent):
         optical_axis = self.orientation
         bend_factor = 0.1 * self.numerical_aperture
         new_direction = normalize(ray.direction + optical_axis * bend_factor)
-        return [Ray(self.position, new_direction, ray.wavelength)]
+        return [Ray(self.position, new_direction, ray.wavelength, intensity=ray.intensity)]
 
     def get_schematic_representation(self):
         return ('circle', self.position[:2], self.orientation[:2], (30, 30))  # Fixed size for visibility
