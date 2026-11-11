@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TIRF Microscope Simulation</title>
+<meta name="description" content="Total internal reflection fluorescence (TIRF) microscope simulator: evanescent field, penetration depth and simulated TIRF vs widefield images, running in the browser.">
+<link rel="icon" href="static/icon.svg">
+<link rel="stylesheet" href="static/style.css">
+<link rel="stylesheet" href="static/style_app.css">
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<header class="top">
+  <a class="brand" href="#/"><span class="mark"></span>TIRF Simulator</a>
+  <nav class="groups">
+    <a href="#/field" data-nav="field">Evanescent field</a>
+    <a href="#/imaging" data-nav="imaging">TIRF vs epi</a>
+    <a href="#/table" data-nav="table">Light table</a>
+    <a href="#/check" data-nav="check">Cross-check</a>
+    <a href="#/about" data-nav="about">About</a>
+  </nav>
+  <div class="right"><a class="small mute" href="https://github.com/gddickinson/tirf_microscope_simulation" target="_blank" rel="noopener">GitHub</a></div>
+</header>
+<main id="app" tabindex="-1"></main>
+<footer class="foot">TIRF Microscope Simulation · <a href="https://github.com/gddickinson/tirf_microscope_simulation">source on GitHub</a> · <span id="mode"></span></footer>
+<script type="module" src="static/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+/* TIRF Microscope Simulation: 488 nm cyan and GFP green accents on the shared neon theme, plus page styles. */
+:root { --accent:#3ee0ff; --accent2:#7cff6b; --accent3:#a18cff; --glow:rgba(62,224,255,.14); }
+button, .btn, .seg button.on { color:#021218; }
+main:focus-visible { outline:none; }
+.mark { box-shadow:0 0 12px var(--accent), inset 0 0 0 4px var(--bg), inset 0 0 0 9px var(--accent2); }
+.herogrid { align-items:center; }
+.fig { margin:0; } .fig canvas { width:100%; height:auto; display:block; background:#020409; border:1px solid var(--line); border-radius:6px; }
+.fig figcaption { margin-top:6px; }
+.door b { color:var(--accent); }
+.sim { display:grid; grid-template-columns:300px minmax(0,1fr); gap:20px; align-items:start; margin-top:14px; }
+.sim .controls { background:rgba(8,12,24,.92); border:1px solid var(--line); border-radius:6px; padding:10px 16px 16px; }
+.sim .view { min-width:0; }
+.sim .view canvas { width:100%; height:auto; display:block; background:#020409; border:1px solid var(--line); border-radius:6px; }
+.seg button { padding:6px 9px; font-size:12px; text-transform:none; letter-spacing:.02em; } /* keep units (nm, µm) lower case */
+.chk label { display:flex; gap:8px; align-items:center; color:var(--ink); }
+.readout { font:13px var(--mono); background:rgba(3,5,10,.9); border:1px solid var(--line); border-radius:4px; padding:10px 12px; margin-top:12px; }
+.readout div { display:flex; justify-content:space-between; gap:10px; } .readout b { color:var(--accent); text-align:right; }
+.pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.pair figure { margin:0; } .pair canvas { image-rendering:pixelated; aspect-ratio:1; }
+.pair figcaption { font:12px var(--mono); color:var(--mute); margin-top:4px; }
+.pair figcaption b { color:var(--accent2); }
+.plots { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.status { font:13px var(--mono); margin:8px 0; }
+table.check td.num { font-family:var(--mono); }
+@media (max-width:860px) {
+  .sim, .herogrid { grid-template-columns:1fr; } .plots { grid-template-columns:1fr; } .sim .view { order:-1; }
+}

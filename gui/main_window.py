@@ -15,6 +15,8 @@ import numpy as np
 
 from tirf_sim.simulation.engine import SimulationEngine
 from tirf_sim.microscope.microscope import Microscope
+from tirf_sim.microscope.default_setup import (build_default_components, ANGLE_RANGE_DEG, POWER_RANGE,
+                                              POWER_SLIDER_DEFAULT)
 from tirf_sim.optical_components import Laser, Mirror, Lens, Objective, Camera
 from .light_table_view import LightTableView
 from ..utils.image import to_gray8
@@ -40,8 +42,7 @@ class MainWindow(QMainWindow):
         self.timer.start(50)  # Update every 50 ms
 
     def setup_microscope(self):
-        laser = Laser(position=(100, 500, 0), orientation=(1, 0, 0), wavelength=488, power=100)
-        camera = Camera(position=(600, 500, 0), orientation=(-1, 0, 0))  # Moved closer to the laser
+        laser, camera = build_default_components()
 
         logger.info(f"Laser set up at position {laser.position} with orientation {laser.orientation}")
         logger.info(f"Camera set up at position {camera.position} with orientation {camera.orientation}")
@@ -77,14 +78,14 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.component_list)
 
         self.laser_angle_x_slider = QSlider(Qt.Horizontal)
-        self.laser_angle_x_slider.setRange(-30, 30)  # Increased range
+        self.laser_angle_x_slider.setRange(*ANGLE_RANGE_DEG)
         self.laser_angle_x_slider.setValue(0)
         self.laser_angle_x_slider.valueChanged.connect(self.update_laser_angle)
         layout.addWidget(QLabel("Laser Angle X"))
         layout.addWidget(self.laser_angle_x_slider)
 
         self.laser_angle_y_slider = QSlider(Qt.Horizontal)
-        self.laser_angle_y_slider.setRange(-30, 30)  # Increased range
+        self.laser_angle_y_slider.setRange(*ANGLE_RANGE_DEG)
         self.laser_angle_y_slider.setValue(0)
         self.laser_angle_y_slider.valueChanged.connect(self.update_laser_angle)
         layout.addWidget(QLabel("Laser Angle Y"))
@@ -92,8 +93,8 @@ class MainWindow(QMainWindow):
 
 
         self.laser_power_slider = QSlider(Qt.Horizontal)
-        self.laser_power_slider.setRange(0, 100)
-        self.laser_power_slider.setValue(50)
+        self.laser_power_slider.setRange(*POWER_RANGE)
+        self.laser_power_slider.setValue(POWER_SLIDER_DEFAULT)
         self.laser_power_slider.valueChanged.connect(self.update_laser_power)
         layout.addWidget(QLabel("Laser Power"))
         layout.addWidget(self.laser_power_slider)

@@ -12,8 +12,9 @@ This project simulates a Total Internal Reflection Fluorescence (TIRF) microscop
 4. [TIRF Microscopy Overview](#tirf-microscopy-overview)
 5. [Mathematical Principles](#mathematical-principles)
 6. [Methods Used in the Simulation](#methods-used-in-the-simulation)
-7. [Contributing](#contributing)
-8. [License](#license)
+7. [Web interface and static site](#web-interface-and-static-site)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ## Installation
 
@@ -70,7 +71,7 @@ Key principles of TIRF microscopy:
 
 ## Mathematical Principles
 
-The simulation incorporates several mathematical concepts:
+The simulation incorporates several mathematical concepts (implemented in `physics/tirf_optics.py`):
 
 1. **Snell's Law**: Describes the relationship between the angles of incidence and refraction for light passing through different media.
 n1 * sin(θ1) = n2 * sin(θ2)
@@ -103,6 +104,34 @@ The simulation employs various computational methods to model the TIRF microscop
 5. **Image Formation**: Simulates the camera sensor's response to incident light, including effects like diffraction-limited spots.
 
 6. **GUI Rendering**: Uses PyQt and PyQtGraph for real-time visualization of the optical table and camera image.
+
+## Web interface and static site
+
+A web version runs the TIRF physics and simulated images in the browser:
+**https://gddickinson.github.io/tirf_microscope_simulation/** (published from `main` by GitHub Pages).
+
+| Home | Evanescent field |
+|---|---|
+| ![Home: live TIRF vs epi images](docs/img/home.png) | ![Evanescent field: angle, wavelength, penetration depth](docs/img/field.png) |
+| **TIRF vs widefield** | **Light table (desktop model)** |
+| ![Simulated TIRF and epi camera images](docs/img/imaging.png) | ![The desktop light table in the browser](docs/img/table.png) |
+
+- **Evanescent field**: angle of incidence (°), wavelength (nm) and refractive indices to critical angle,
+  penetration depth d (nm) and I(z) = I0·exp(−z/d), using the formulas below (`physics/tirf_optics.py`).
+- **TIRF vs widefield**: a seeded sample of diffusing fluorophores imaged by TIRF and epi illumination with the same
+  camera (Gaussian PSF, pixel size = camera pixel / magnification, default 16 µm / 100× = 160 nm; Poisson and read
+  noise), from `physics/tirf_imaging.py`.
+- **Light table**: the desktop app's laser/camera model, ported line by line.
+- **Cross-check**: the JavaScript engines against the Python code on the same inputs and seeds.
+
+Run the web app locally (FastAPI, http://127.0.0.1:8203):
+
+    pip install -r requirements-web.txt
+    python run_web.py
+
+Tests: `python -m pytest -q tests/` (the web tests also run the node test `web/static/tirf_engine.test.mjs`, which
+compares the JS engines with `tests/fixtures/engine_fixture.json`; regenerate it with
+`python scripts/make_engine_fixture.py`). Build the static site with `python scripts/build_static.py`.
 
 ## Contributing
 
