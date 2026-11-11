@@ -67,11 +67,11 @@ class Camera(OpticalComponent):
 
     def add_diffraction_spot(self, x, y, intensity=1.0):
         # Create a 2D Gaussian to represent the diffraction-limited spot
-        sigma = 5  # Increased from 1
+        sigma = 5  # standard deviation in pixels (the window below is +-4 sigma)
         x_range = np.arange(max(0, int(x)-20), min(self.sensor_size[0], int(x)+21))
         y_range = np.arange(max(0, int(y)-20), min(self.sensor_size[1], int(y)+21))
         xx, yy = np.meshgrid(x_range, y_range)
-        gaussian = multivariate_normal.pdf(np.dstack((xx, yy)), mean=[x, y], cov=[[sigma, 0], [0, sigma]])
+        gaussian = multivariate_normal.pdf(np.dstack((xx, yy)), mean=[x, y], cov=[[sigma ** 2, 0], [0, sigma ** 2]])
 
         # Normalize, scale by the ray's relative intensity (peak 255 at full laser power) and add to the image
         gaussian_normalized = gaussian / gaussian.max() * 255 * min(max(intensity, 0.0), 1.0)

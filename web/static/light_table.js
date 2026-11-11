@@ -41,14 +41,14 @@ export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = 
   return out;
 }
 
-// Camera.add_diffraction_spot: a Gaussian with covariance diag(5, 5) px^2 on a 41 x 41 window, peak 255 x intensity.
-export function diffractionSpot(x, y, W, H, intensity = 1, variance = 5) {
+// Camera.add_diffraction_spot: a Gaussian with sigma = 5 px on a 41 x 41 window, peak 255 x intensity.
+export function diffractionSpot(x, y, W, H, intensity = 1, sigma = 5) {
   const x0 = Math.max(0, Math.trunc(x) - 20), x1 = Math.min(W, Math.trunc(x) + 21);
   const y0 = Math.max(0, Math.trunc(y) - 20), y1 = Math.min(H, Math.trunc(y) + 21);
   const w = x1 - x0, h = y1 - y0, values = new Float64Array(w * h);
   let max = 0;
   for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
-    const dx = x0 + i - x, dy = y0 + j - y, g = Math.exp(-0.5 * (dx * dx + dy * dy) / variance);
+    const dx = x0 + i - x, dy = y0 + j - y, g = Math.exp(-0.5 * (dx * dx + dy * dy) / (sigma * sigma));
     values[j * w + i] = g; if (g > max) max = g;
   }
   for (let k = 0; k < values.length; k++) values[k] = values[k] / max * 255 * intensity;

@@ -14,9 +14,9 @@ The repository root is the Python package `tirf_sim` (modules import `tirf_sim.*
 ## Desktop model
 | Module | Contents |
 |---|---|
-| `optical_components/base.py` | `OpticalComponent` (position, orientation, on/off, schematic), `Ray` (origin, direction, wavelength, length) |
-| `optical_components/laser.py` | `Laser`: `emit_light()`, `calculate_direction()` from angle_x/angle_y, `set_angles()` |
-| `optical_components/camera.py` | `Camera`: `ray_intersection()`, `add_diffraction_spot()` (Gaussian, variance 5 px²), `get_image()`, `clear_image()` |
+| `optical_components/base.py` | `OpticalComponent` (position, orientation, on/off, schematic), `Ray` (origin, direction, wavelength, length, intensity) |
+| `optical_components/laser.py` | `Laser`: `emit_light()` (ray intensity = power/100), `calculate_direction()` (orientation deflected by angle_x/angle_y), `set_angles()` |
+| `optical_components/camera.py` | `Camera`: `ray_intersection()`, `add_diffraction_spot()` (Gaussian, sigma 5 px), `get_image()`, `clear_image()` |
 | `optical_components/{mirror,lens,beam_splitter,filter,objective}.py` | Other components (not in the default table) |
 | `microscope/microscope.py` | `Microscope`: component list, mode TIRF/Epifluorescence, `simulate_light_path()` |
 | `microscope/default_setup.py` | `build_default_components()`, `LASER`, `CAMERA`, slider ranges (shared by GUI and web) |
@@ -62,5 +62,6 @@ The repository root is the Python package `tirf_sim` (modules import `tirf_sim.*
 | `tests/test_mirror.py` | Mirror reflection |
 | `tests/test_entry_points.py` | `main.py` imports from any folder name; `load_package` |
 | `tests/test_camera_view.py` | Camera View shows the spot (`to_gray8`, offscreen Qt) |
+| `tests/test_light_table_model.py` | Laser orientation and angles, camera hit over the slider range, power scaling, spot sigma |
 | `tests/test_web.py` | API, static build, node engine test, fixture current, physics values |
 | `.github/workflows/pages.yml` | Build and publish the static site on push to main |

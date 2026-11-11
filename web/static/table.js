@@ -19,7 +19,7 @@ route('table', async (args, query) => {
     <div class="two"><figure class="fig"><canvas id="cam" width="1000" height="1000" role="img" aria-label="Camera image, 1000 by 1000 pixels"></canvas>
     <figcaption class="small mute">Camera View: ${T.sensor_px[0]} × ${T.sensor_px[1]} px, pixel = 1 unit (row = sensor y, from top)</figcaption></figure>
     <figure class="fig"><canvas id="zoom" width="410" height="410" role="img" aria-label="Close-up of the diffraction spot, 41 by 41 pixels"></canvas>
-    <figcaption class="small mute">Close-up: the 41 × 41 px spot window, 10× (Gaussian, variance 5 px²)</figcaption></figure></div>`;
+    <figcaption class="small mute">Close-up: the 41 × 41 px spot window, 10× (Gaussian, σ = 5 px)</figcaption></figure></div>`;
 
   const run = button(controls, st.running ? 'Stop Simulation' : 'Start Simulation', () => {
     st.running = !st.running; run.textContent = st.running ? 'Stop Simulation' : 'Start Simulation'; draw();

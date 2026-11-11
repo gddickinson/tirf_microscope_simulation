@@ -17,6 +17,12 @@
   Cross-check, About. JS engines (`tirf_optics.js`, `tirf_imaging.js`, `light_table.js`) match the Python on the
   fixture to <= 1.3e-15 relative (node test + Cross-check page).
 - Tests: `python -m pytest -q tests/` (mirror, entry points, camera view, web).
-- Open questions for George: the Laser ignores its orientation (beam always leaves along +z), so the default camera
-  is reached only for Angle X > ~27°; laser power is not used by the camera; Camera's `sigma = 5` is used as a
-  variance (spot sigma ~2.2 px). Left as they are.
+- Open question for George: the defaults of the new imaging model (physics/defaults.py).
+
+## 2026-11-11: light-table model fixes (after the web interface was merged)
+- Laser now honours its orientation (Angle X turns the beam in the table plane, Angle Y tilts it out of it); the
+  camera sensor is centred on the camera position, so the whole ±30° slider range lands on it.
+- Laser power scales the delivered intensity: rays carry intensity = power/100 through all components (beam
+  splitters split it), the camera spot peak is 255 × intensity; the GUI laser starts at the slider value.
+- Camera spot sigma (5 px) is now a standard deviation (was used as a variance, ~2.2 px).
+- JS port (light_table.js) and fixture regenerated; tests/test_light_table_model.py covers all three.

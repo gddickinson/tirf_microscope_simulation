@@ -84,3 +84,15 @@ def test_gui_laser_starts_at_the_power_slider_value():
     assert laser.power == w.laser_power_slider.value()
     w.laser_power_slider.setValue(80)
     assert laser.power == 80
+
+
+# 3. The diffraction spot's sigma (5 px) is a standard deviation: 1 sigma from the centre the spot is exp(-1/2) of peak.
+def test_spot_sigma_is_a_standard_deviation():
+    from tirf_sim.optical_components import Camera
+    cam = Camera((0, 0, 0), (-1, 0, 0))
+    cam.add_diffraction_spot(300.0, 400.0)
+    img = cam.get_image()
+    assert img[400, 300] == pytest.approx(255)
+    assert img[400, 305] == pytest.approx(255 * math.exp(-0.5), rel=1e-9)
+    assert img[395, 300] == pytest.approx(255 * math.exp(-0.5), rel=1e-9)
+    assert img[400, 310] == pytest.approx(255 * math.exp(-2), rel=1e-9)
