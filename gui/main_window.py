@@ -17,6 +17,7 @@ from tirf_sim.simulation.engine import SimulationEngine
 from tirf_sim.microscope.microscope import Microscope
 from tirf_sim.optical_components import Laser, Mirror, Lens, Objective, Camera
 from .light_table_view import LightTableView
+from ..utils.image import to_gray8
 
 from ..logger import logger
 
@@ -179,8 +180,10 @@ class MainWindow(QMainWindow):
     def display_image(self, image):
         if np.max(image) > 0:
             logger.debug(f"Displaying image with max value: {np.max(image)}")
-        h, w = image.shape
-        qimage = QImage(image.data, w, h, w, QImage.Format_Grayscale8)
+        # Camera images are float64; QImage needs 8-bit bytes (copy() so Qt owns the pixels)
+        gray = to_gray8(image)
+        h, w = gray.shape
+        qimage = QImage(gray.data, w, h, w, QImage.Format_Grayscale8).copy()
         pixmap = QPixmap.fromImage(qimage)
         scaled_pixmap = pixmap.scaled(400, 400, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.image_label.setPixmap(scaled_pixmap)
