@@ -8,10 +8,13 @@ const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a
 const norm = v => Math.sqrt(dot(v, v));
 const normalize = v => { const n = norm(v); return v.map(x => x / n); };
 
-// Laser.calculate_direction: note it does not use the laser's orientation (z is "forward").
-export function laserDirection(axDeg, ayDeg) {
-  const ax = axDeg * (Math.PI / 180), ay = ayDeg * (Math.PI / 180);
-  return normalize([Math.cos(ay) * Math.sin(ax), Math.sin(ay), Math.cos(ay) * Math.cos(ax)]);
+// Laser.calculate_direction: the orientation deflected by Angle X within the table plane (about +z) and by Angle Y
+// out of it; both 0 -> along the orientation.
+export function laserDirection(orientation, axDeg, ayDeg) {
+  const ax = axDeg * (Math.PI / 180), ay = ayDeg * (Math.PI / 180), f = normalize(orientation);
+  const upRef = Math.abs(f[2]) < 0.999 ? [0, 0, 1] : [0, 1, 0];
+  const side = normalize(cross(upRef, f)), up = cross(f, side);
+  return normalize([0, 1, 2].map(i => Math.cos(ay) * Math.cos(ax) * f[i] + Math.cos(ay) * Math.sin(ax) * side[i] + Math.sin(ay) * up[i]));
 }
 
 // One frame: LightTable.simulate_light_path + Camera.ray_intersection + Camera.add_diffraction_spot.
@@ -20,7 +23,7 @@ export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = 
   const [W, H] = setup.sensor_px;
   const out = { origin: lp, direction: null, length: 0, hit: null, spot: null, why: '' };
   if (!laserOn) { out.why = 'laser off'; return out; }
-  const dir = laserDirection(axDeg, ayDeg);
+  const dir = laserDirection(setup.laser.orientation, axDeg, ayDeg);
   out.direction = dir;
   out.length = norm(sub(cp, lp)) * 3;                      // extend_ray: 3 x laser-camera distance
   if (!cameraOn) { out.why = 'camera off'; return out; }
@@ -30,7 +33,7 @@ export function simulateTable(setup, axDeg, ayDeg, { laserOn = true, cameraOn = 
   if (!(t >= 0 && t <= out.length)) { out.why = 'camera plane not reached within the ray length'; return out; }
   const p = lp.map((v, i) => v + t * dir[i]);
   const lx = cross(co, [0, 0, 1]), ly = cross(lx, co);
-  const x = dot(sub(p, cp), lx), y = dot(sub(p, cp), ly);
+  const x = dot(sub(p, cp), lx) + W / 2, y = dot(sub(p, cp), ly) + H / 2;   // sensor centred on the camera
   if (!(x >= 0 && x < W && y >= 0 && y < H)) { out.why = 'ray misses the sensor'; out.miss = [x, y]; return out; }
   out.hit = [x, y];
   out.spot = diffractionSpot(x, y, W, H);

@@ -95,8 +95,7 @@ def test_optics_endpoint():
 
 def test_table_endpoint_uses_desktop_classes():
     hit = client.get("/api/table?ax_deg=30&ay_deg=0").json()
-    assert hit["hit"] is not None and math.isclose(hit["hit"][1], 1000 * math.cos(math.radians(30)), rel_tol=1e-9)
+    assert hit["hit"] is not None and math.isclose(hit["hit"][0], 500 + 500 * math.tan(math.radians(30)), rel_tol=1e-9)
     assert hit["image_max"] == 255
-    miss = client.get("/api/table?ax_deg=0&ay_deg=0").json()
+    miss = client.get("/api/table?ax_deg=60&ay_deg=0").json()
     assert miss["hit"] is None and miss["image_sum"] == 0
-

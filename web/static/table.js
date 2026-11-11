@@ -6,7 +6,7 @@ import { loadPresets, layout, check, button, readout, fmt, ink, mute } from './u
 
 route('table', async (args, query) => {
   const { table: T } = await loadPresets();
-  const st = { ax: +(query.ax ?? 30), ay: +(query.ay ?? 10), power: T.power_default, laserOn: true, cameraOn: true, running: query.run !== '0' };
+  const st = { ax: +(query.ax ?? 15), ay: +(query.ay ?? 10), power: T.power_default, laserOn: true, cameraOn: true, running: query.run !== '0' };
   app().innerHTML = `<p class="kicker">The desktop app, in the browser</p><h1 class="glow">Light table</h1>
   <p class="lead">The PyQt app's optical table: a ${T.laser.wavelength} nm laser and a camera, with the same sliders
   (laser angles X and Y, ${T.angle_range_deg[0]}° to ${T.angle_range_deg[1]}°, and power) and the same ray–camera geometry and
@@ -15,7 +15,7 @@ route('table', async (args, query) => {
   view.innerHTML = `<div class="two"><figure class="fig"><canvas id="top" width="520" height="420" role="img" aria-label="Top view (x-y) of the light table, as in the desktop Light Table View"></canvas>
     <figcaption class="small mute">Top view x–y (the desktop Light Table View)</figcaption></figure>
     <figure class="fig"><canvas id="sideT" width="520" height="420" role="img" aria-label="Side view (x-z) of the light table"></canvas>
-    <figcaption class="small mute">Side view x–z (web addition: the beam leaves along +z)</figcaption></figure></div>
+    <figcaption class="small mute">Side view x–z (web addition: Angle Y tilts the beam out of the table plane)</figcaption></figure></div>
     <div class="two"><figure class="fig"><canvas id="cam" width="1000" height="1000" role="img" aria-label="Camera image, 1000 by 1000 pixels"></canvas>
     <figcaption class="small mute">Camera View: ${T.sensor_px[0]} × ${T.sensor_px[1]} px, pixel = 1 unit (row = sensor y, from top)</figcaption></figure>
     <figure class="fig"><canvas id="zoom" width="410" height="410" role="img" aria-label="Close-up of the diffraction spot, 41 by 41 pixels"></canvas>
@@ -30,9 +30,9 @@ route('table', async (args, query) => {
   check(controls, 'lon', 'Laser on', true, v => { st.laserOn = v; draw(); });
   check(controls, 'con', 'Camera on', true, v => { st.cameraOn = v; draw(); });
   const out = readout(controls);
-  controls.insertAdjacentHTML('beforeend', `<p class="small mute">As in the desktop model, the beam direction comes only from the two
-    angles (it does not use the laser's orientation), so the camera at x = ${T.camera.position[0]} is reached only for Angle X above
-    about 27° with Angle Y ≥ 0. The desktop app starts at 0°, 0° (beam misses the camera); this page starts at 30°, 10°.
+  controls.insertAdjacentHTML('beforeend', `<p class="small mute">The beam leaves along the laser's orientation; Angle X turns it
+    within the table plane and Angle Y tilts it out of the plane. The ${T.sensor_px[0]}-px sensor is centred on the camera
+    ${T.camera.position[0] - T.laser.position[0]} units away, so the whole slider range lands on it.
     Power is stored but does not change the image.</p>`);
 
   const cTop = document.getElementById('top').getContext('2d'), cSide = document.getElementById('sideT').getContext('2d'),
@@ -56,7 +56,7 @@ route('table', async (args, query) => {
 function plan(ctx, T, r, a, b, la, lb) {
   const W = ctx.canvas.width, H = ctx.canvas.height, M = 46;
   const lo = [0, 0], hi = [1000, 1000];
-  if (b === 2) { lo[1] = -100; hi[1] = 1500; }
+  if (b === 2) { lo[1] = -500; hi[1] = 500; }
   const sx = (W - 2 * M) / (hi[0] - lo[0]), sy = (H - 2 * M) / (hi[1] - lo[1]);
   const X = v => M + (v - lo[0]) * sx, Y = v => H - M - (v - lo[1]) * sy;
   ctx.clearRect(0, 0, W, H); ctx.font = '12px ui-monospace, Menlo, monospace';

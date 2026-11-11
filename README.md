@@ -39,8 +39,8 @@ python main.py
 2. The GUI will open, displaying the light table view, camera view, and control panel.
 
 3. Press "Start Simulation", then use the sliders in the control panel to adjust the laser angles and power.
-   With the default layout the beam reaches the camera only for Laser Angle X above about 27° and
-   Laser Angle Y of 0° or more; the power value is stored but does not yet change the camera image.
+   The beam leaves along the laser's orientation; Angle X turns it within the table plane and Angle Y tilts it
+   out of the plane, moving the spot across the camera. The power value is stored but does not yet change the image.
 
 4. Toggle components on/off using the checkboxes in the component list.
 

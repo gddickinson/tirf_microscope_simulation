@@ -19,12 +19,16 @@ class Laser(OpticalComponent):
 
 
     def calculate_direction(self):
-        # Calculate direction based on angles
-        direction = np.array([
-            np.cos(self.angle_y) * np.sin(self.angle_x),
-            np.sin(self.angle_y),
-            np.cos(self.angle_y) * np.cos(self.angle_x)
-        ])
+        """Beam direction: the laser's orientation deflected by angle_x within the table plane (about the table
+        normal, +z) and by angle_y out of it (radians). With both angles 0 the beam leaves along the orientation."""
+        forward = self.orientation / np.linalg.norm(self.orientation)
+        up_ref = np.array([0.0, 0.0, 1.0]) if abs(forward[2]) < 0.999 else np.array([0.0, 1.0, 0.0])
+        side = np.cross(up_ref, forward)
+        side = side / np.linalg.norm(side)
+        up = np.cross(forward, side)
+        direction = (np.cos(self.angle_y) * np.cos(self.angle_x) * forward
+                     + np.cos(self.angle_y) * np.sin(self.angle_x) * side
+                     + np.sin(self.angle_y) * up)
         return direction / np.linalg.norm(direction)
 
     def set_angles(self, angle_x, angle_y):

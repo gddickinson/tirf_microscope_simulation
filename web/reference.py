@@ -53,7 +53,7 @@ def table_setup():
 SMALL = dict(DEFAULTS, image_px=32, n_surface=15, n_bulk=120, depth_um=2.0, seed=3)
 OPTICS_CASES = [(wl, th, n1, n2) for wl in (405.0, 488.0, 640.0) for th in (45.0, 61.0, 62.0, 66.0, 72.5)
                 for n1, n2 in ((1.518, 1.333), (1.518, 1.38), (1.77, 1.333))]
-TABLE_CASES = [(0, 0), (20, 0), (27, 0), (30, 0), (30, 12), (29, -4), (-30, 5), (30, 30)]
+TABLE_CASES = [(0, 0), (20, 0), (-27, 3), (30, 0), (30, 12), (29, -4), (-30, -30), (60, 0), (0, 80), (120, 0)]
 
 
 def fixture():

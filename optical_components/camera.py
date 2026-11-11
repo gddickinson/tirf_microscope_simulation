@@ -45,10 +45,10 @@ class Camera(OpticalComponent):
                 logger.debug(f"Local coordinates: x={local_x}, y={local_y}")
                 logger.debug(f"Sensor size: {self.sensor_size}, Pixel size: {self.pixel_size}")
 
-                if (0 <= local_x < self.sensor_size[0] * self.pixel_size and
-                    0 <= local_y < self.sensor_size[1] * self.pixel_size):
-                    pixel_x = local_x / self.pixel_size
-                    pixel_y = local_y / self.pixel_size
+                # the sensor is centred on the camera position (as drawn in the schematic)
+                pixel_x = local_x / self.pixel_size + self.sensor_size[0] / 2
+                pixel_y = local_y / self.pixel_size + self.sensor_size[1] / 2
+                if 0 <= pixel_x < self.sensor_size[0] and 0 <= pixel_y < self.sensor_size[1]:
                     logger.debug(f"Intersection at pixel: ({pixel_x}, {pixel_y})")
                     return pixel_x, pixel_y
                 else:
