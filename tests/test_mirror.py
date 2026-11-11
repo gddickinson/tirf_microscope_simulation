@@ -16,6 +16,8 @@ class TestMirror(unittest.TestCase):
 
         expected_direction = np.array([1, 0, 0])
         np.testing.assert_array_almost_equal(reflected_ray.direction, expected_direction)
+        self.assertEqual(reflected_ray.length, incoming_ray.length)
+        self.assertEqual(reflected_ray.wavelength, 500)
 
 if __name__ == '__main__':
     unittest.main()
