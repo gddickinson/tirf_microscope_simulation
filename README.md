@@ -20,12 +20,12 @@ This project simulates a Total Internal Reflection Fluorescence (TIRF) microscop
 To run the TIRF microscope simulation, follow these steps:
 
 1. Clone the repository:
-git clone https://github.com/yourusername/tirf-microscope-simulation.git
+git clone https://github.com/gddickinson/tirf_microscope_simulation.git
 
 2. Navigate to the project directory:
-cd tirf-microscope-simulation
+cd tirf_microscope_simulation
 
-3. Install the required dependencies:
+3. Install the required dependencies (numpy, scipy, PyQt5, pyqtgraph):
 pip install -r requirements.txt
 
 ## Usage
@@ -35,13 +35,15 @@ To start the simulation:
 1. Run the main script:
 python main.py
 
-2. The GUI will open, displaying the optical table view, camera image, and control panel.
+2. The GUI will open, displaying the light table view, camera view, and control panel.
 
-3. Use the sliders in the control panel to adjust the laser angles and power.
+3. Press "Start Simulation", then use the sliders in the control panel to adjust the laser angles and power.
+   With the default layout the beam reaches the camera only for Laser Angle X above about 27° and
+   Laser Angle Y of 0° or more; the power value is stored but does not yet change the camera image.
 
 4. Toggle components on/off using the checkboxes in the component list.
 
-5. Observe the changes in the optical table view and the resulting camera image.
+5. Observe the changes in the light table view and the resulting camera image.
 
 ## Components
 
@@ -96,7 +98,7 @@ The simulation employs various computational methods to model the TIRF microscop
 
 3. **Intersection Algorithms**: Determine where rays intersect with optical components and the camera sensor.
 
-4. **Gaussian Beam Approximation**: Models the laser beam profile and its interaction with optical components.
+4. **Gaussian Beam Approximation** (planned, not implemented yet): the laser is currently traced as a single ray.
 
 5. **Image Formation**: Simulates the camera sensor's response to incident light, including effects like diffraction-limited spots.
 
